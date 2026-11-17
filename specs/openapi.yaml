@@ -2324,6 +2324,10 @@ paths:
             period, broken down by outcome (promotional offer redeemed,
             alternate plan redeemed, no purchase) (realtime only)
 
+            - app_store_save_rate_conversion: Apple retention messages sent per
+            period and the share of them that were saved (save rate) (realtime
+            only)
+
 
             Charts marked as realtime only are served exclusively by Charts v3
             and
@@ -2376,6 +2380,7 @@ paths:
               - paywall_ltv
               - paywall_abandonment
               - app_store_save_outcomes
+              - app_store_save_rate_conversion
             example: revenue
         - name: realtime
           description: >-
@@ -2434,6 +2439,18 @@ paths:
               - PLN
               - NZD
               - CHF
+              - DKK
+              - HKD
+              - IDR
+              - INR
+              - KES
+              - MYR
+              - NOK
+              - PKR
+              - SGD
+              - TRY
+              - TWD
+              - ZAR
           example: EUR
         - name: resolution
           description: >
@@ -2724,6 +2741,10 @@ paths:
             period, broken down by outcome (promotional offer redeemed,
             alternate plan redeemed, no purchase) (realtime only)
 
+            - app_store_save_rate_conversion: Apple retention messages sent per
+            period and the share of them that were saved (save rate) (realtime
+            only)
+
 
             Charts marked as realtime only are served exclusively by Charts v3
             and
@@ -2776,6 +2797,7 @@ paths:
               - paywall_ltv
               - paywall_abandonment
               - app_store_save_outcomes
+              - app_store_save_rate_conversion
             example: revenue
         - name: realtime
           description: >-
@@ -3005,6 +3027,10 @@ paths:
             period, broken down by outcome (promotional offer redeemed,
             alternate plan redeemed, no purchase) (realtime only)
 
+            - app_store_save_rate_conversion: Apple retention messages sent per
+            period and the share of them that were saved (save rate) (realtime
+            only)
+
 
             Charts marked as realtime only are served exclusively by Charts v3
             and
@@ -3057,6 +3083,7 @@ paths:
               - paywall_ltv
               - paywall_abandonment
               - app_store_save_outcomes
+              - app_store_save_rate_conversion
             example: revenue
       requestBody:
         required: true
@@ -3257,6 +3284,10 @@ paths:
             period, broken down by outcome (promotional offer redeemed,
             alternate plan redeemed, no purchase) (realtime only)
 
+            - app_store_save_rate_conversion: Apple retention messages sent per
+            period and the share of them that were saved (save rate) (realtime
+            only)
+
 
             Charts marked as realtime only are served exclusively by Charts v3
             and
@@ -3309,6 +3340,7 @@ paths:
               - paywall_ltv
               - paywall_abandonment
               - app_store_save_outcomes
+              - app_store_save_rate_conversion
             example: revenue
         - name: export_id
           description: ID of the subscriber list export job
@@ -6947,6 +6979,119 @@ paths:
         <code>project_configuration:offerings:read_write</code>. This endpoint
         belongs to the <strong>Project Configuration</strong> domain, which has
         a default rate limit of <strong>60 requests per minute</strong>.
+  /projects/{project_id}/iam/attribute_permissions:
+    get:
+      summary: Get the customer attribute permissions of a project
+      operationId: get-iam-attribute-permissions
+      x-revenuecat-rate-limiting-domain: iam
+      x-scopes:
+        - iam:settings:read
+      x-release-status: public
+      tags:
+        - IAM
+      parameters:
+        - name: project_id
+          description: ID of the project
+          required: true
+          in: path
+          schema:
+            type: string
+            maxLength: 255
+            example: proj1ab2c3d4
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IAMAttributePermissions'
+          headers:
+            RevenueCat-Rate-Limit-Current-Usage:
+              $ref: '#/components/headers/RateLimitCurrentUsage'
+            RevenueCat-Rate-Limit-Current-Limit:
+              $ref: '#/components/headers/RateLimitCurrentLimit'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '423':
+          $ref: '#/components/responses/Locked'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        '503':
+          $ref: '#/components/responses/InternalError'
+      description: >-
+        This endpoint requires the following permission(s):
+        <code>iam:settings:read</code>. This endpoint belongs to the
+        <strong>Iam</strong> domain, which has a default rate limit of
+        <strong>60 requests per minute</strong>.
+    post:
+      summary: Update the customer attribute permissions of a project
+      operationId: update-iam-attribute-permissions
+      x-revenuecat-rate-limiting-domain: iam
+      x-scopes:
+        - iam:settings:read_write
+      x-release-status: public
+      tags:
+        - IAM
+      parameters:
+        - name: project_id
+          description: ID of the project
+          required: true
+          in: path
+          schema:
+            type: string
+            maxLength: 255
+            example: proj1ab2c3d4
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateIAMAttributePermissionsRequest'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IAMAttributePermissions'
+          headers:
+            RevenueCat-Rate-Limit-Current-Usage:
+              $ref: '#/components/headers/RateLimitCurrentUsage'
+            RevenueCat-Rate-Limit-Current-Limit:
+              $ref: '#/components/headers/RateLimitCurrentLimit'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '423':
+          $ref: '#/components/responses/Locked'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        '503':
+          $ref: '#/components/responses/InternalError'
+      description: >-
+        This endpoint requires the following permission(s):
+        <code>iam:settings:read_write</code>. This endpoint belongs to the
+        <strong>Iam</strong> domain, which has a default rate limit of
+        <strong>60 requests per minute</strong>.
   /projects/{project_id}/iam/authentication_methods:
     get:
       summary: Get a list of IAM authentication methods
@@ -7912,6 +8057,18 @@ paths:
               - PLN
               - NZD
               - CHF
+              - DKK
+              - HKD
+              - IDR
+              - INR
+              - KES
+              - MYR
+              - NOK
+              - PKR
+              - SGD
+              - TRY
+              - TWD
+              - ZAR
           example: EUR
       responses:
         '200':
@@ -8032,6 +8189,18 @@ paths:
               - PLN
               - NZD
               - CHF
+              - DKK
+              - HKD
+              - IDR
+              - INR
+              - KES
+              - MYR
+              - NOK
+              - PKR
+              - SGD
+              - TRY
+              - TWD
+              - ZAR
           example: EUR
         - name: revenue_type
           in: query
@@ -9833,7 +10002,8 @@ paths:
           $ref: '#/components/responses/InternalError'
       description: >-
         Publish the current paywall draft so RevenueCat SDKs can serve it to
-        customers. This endpoint requires the following permission(s):
+        customers. This will not work for publishing a paywall with multiple
+        steps. This endpoint requires the following permission(s):
         <code>project_configuration:offerings:read_write</code>. This endpoint
         belongs to the <strong>Project Configuration</strong> domain, which has
         a default rate limit of <strong>60 requests per minute</strong>.
@@ -13065,6 +13235,18 @@ components:
             - PLN
             - NZD
             - CHF
+            - DKK
+            - HKD
+            - IDR
+            - INR
+            - KES
+            - MYR
+            - NOK
+            - PKR
+            - SGD
+            - TRY
+            - TWD
+            - ZAR
           example: USD
     AudienceRules:
       type: object
@@ -14666,6 +14848,9 @@ components:
           description: >-
             Ids of the Apple apps that form the Apple App ID group of the
             method. Omit or set to null to cover every Apple app of the project.
+            Include the app that the Services ID is grouped with in Apple. Set
+            to an empty list for a web-only method, whose Services ID is grouped
+            with no app of the project; it then needs a `services_id`.
           type: array
           nullable: true
           items:
@@ -14680,6 +14865,15 @@ components:
             Developer account.
           type: string
           example: app1a2b3c4
+          minLength: 1
+          maxLength: 255
+          nullable: true
+        services_id:
+          description: >-
+            Apple Services ID used by Sign in with Apple on the web and on
+            Android. Matched against the `aud` claim of the ID token.
+          type: string
+          example: com.example.web
           minLength: 1
           maxLength: 255
           nullable: true
@@ -15306,6 +15500,17 @@ components:
           minLength: 1
           maxLength: 255
           example: app_1234567890abcdef
+        status:
+          description: >-
+            Whether the webhook integration sends events. A disabled webhook
+            integration keeps its settings but sends no events until it is set
+            back to active. Events that happen while it is disabled are not sent
+            later. Defaults to active.
+          type: string
+          enum:
+            - active
+            - disabled
+          example: disabled
       additionalProperties: false
     Currency:
       type: string
@@ -16712,6 +16917,7 @@ components:
         - updated_at
         - app_ids
         - primary_app_id
+        - services_id
         - id_token_iat_freshness_seconds
       properties:
         object:
@@ -16756,7 +16962,8 @@ components:
         app_ids:
           description: >-
             Ids of the Apple apps that form the Apple App ID group of the
-            method. Null when the method covers every Apple app of the project.
+            method. Null when the method covers every Apple app of the project,
+            empty for a web-only method.
           type: array
           nullable: true
           items:
@@ -16774,6 +16981,15 @@ components:
           minLength: 1
           maxLength: 255
           nullable: true
+        services_id:
+          description: >-
+            Apple Services ID used by Sign in with Apple on the web and on
+            Android.
+          type: string
+          example: com.example.web
+          minLength: 1
+          maxLength: 255
+          nullable: true
         id_token_iat_freshness_seconds:
           description: >-
             Maximum age in seconds of the `iat` claim of the external ID token,
@@ -16781,6 +16997,40 @@ components:
           type: integer
           example: 5
           nullable: true
+      additionalProperties: true
+    IAMAttributePermissions:
+      type: object
+      title: IAMAttributePermissions
+      description: >-
+        Who can read and write customer attributes. `authenticated`: your app,
+        for customers signed in with RevenueCat authentication, and your
+        backend. `private`: your backend only, with a secret API key. The
+        `_protected` write permissions only allow setting an attribute while it
+        is unset; clearing it is still allowed. Custom attributes without an
+        override use the custom attribute defaults.
+      required:
+        - object
+        - reserved_defaults
+        - custom_defaults
+        - custom_overrides
+      properties:
+        object:
+          description: >-
+            String representing the object's type. Objects of the same type
+            share the same value.
+          type: string
+          enum:
+            - iam_attribute_permissions
+          example: iam_attribute_permissions
+        reserved_defaults:
+          $ref: '#/components/schemas/IAMReservedAttributeDefaults'
+        custom_defaults:
+          $ref: '#/components/schemas/IAMCustomAttributeDefaults'
+        custom_overrides:
+          type: array
+          description: The custom attributes with their own permissions, sorted by key.
+          items:
+            $ref: '#/components/schemas/IAMCustomAttributeOverride'
       additionalProperties: true
     IAMAuthenticationMethod:
       oneOf:
@@ -16801,6 +17051,115 @@ components:
           apple: '#/components/schemas/IAMAppleAuthenticationMethod'
           facebook: '#/components/schemas/IAMFacebookAuthenticationMethod'
           firebase: '#/components/schemas/IAMFirebaseAuthenticationMethod'
+    IAMCustomAttributeDefaults:
+      type: object
+      title: IAMCustomAttributeDefaults
+      required:
+        - read_permission
+        - effective_read_permission
+        - write_permission
+        - effective_write_permission
+      properties:
+        read_permission:
+          type: string
+          enum:
+            - authenticated
+            - private
+            - null
+          nullable: true
+          example: authenticated
+          description: >-
+            The default read permission of custom attributes, or null when it
+            was never set.
+        effective_read_permission:
+          type: string
+          enum:
+            - authenticated
+            - private
+          example: authenticated
+          description: >-
+            The default read permission in effect. It is `authenticated` when
+            none was set.
+        write_permission:
+          type: string
+          enum:
+            - authenticated
+            - authenticated_protected
+            - private
+            - private_protected
+            - null
+          nullable: true
+          example: private
+          description: >-
+            The default write permission of custom attributes, or null when it
+            was never set.
+        effective_write_permission:
+          type: string
+          enum:
+            - authenticated
+            - authenticated_protected
+            - private
+            - private_protected
+          example: private
+          description: >-
+            The default write permission in effect. It is `authenticated` when
+            none was set.
+      additionalProperties: true
+    IAMCustomAttributeOverride:
+      type: object
+      title: IAMCustomAttributeOverride
+      required:
+        - key
+        - read_permission
+        - effective_read_permission
+        - write_permission
+        - effective_write_permission
+      properties:
+        key:
+          type: string
+          example: favorite_cat
+          description: The name of the custom attribute.
+        read_permission:
+          type: string
+          enum:
+            - authenticated
+            - private
+            - null
+          nullable: true
+          example: private
+          description: >-
+            The read permission of this attribute, or null when it inherits the
+            custom attribute default.
+        effective_read_permission:
+          type: string
+          enum:
+            - authenticated
+            - private
+          example: private
+          description: The read permission in effect for this attribute.
+        write_permission:
+          type: string
+          enum:
+            - authenticated
+            - authenticated_protected
+            - private
+            - private_protected
+            - null
+          nullable: true
+          example: null
+          description: >-
+            The write permission of this attribute, or null when it inherits the
+            custom attribute default.
+        effective_write_permission:
+          type: string
+          enum:
+            - authenticated
+            - authenticated_protected
+            - private
+            - private_protected
+          example: private
+          description: The write permission in effect for this attribute.
+      additionalProperties: true
     IAMEmailOtpAuthenticationMethod:
       type: object
       title: IAMEmailOtpAuthenticationMethod
@@ -17272,6 +17631,34 @@ components:
           type: integer
           example: 5
           nullable: true
+      additionalProperties: true
+    IAMReservedAttributeDefaults:
+      type: object
+      title: IAMReservedAttributeDefaults
+      required:
+        - read_permission
+        - effective_read_permission
+      properties:
+        read_permission:
+          type: string
+          enum:
+            - authenticated
+            - private
+            - null
+          nullable: true
+          example: private
+          description: >-
+            The read permission set for all reserved attributes (prefixed with
+            `$`), or null when it was never set.
+        effective_read_permission:
+          type: string
+          enum:
+            - authenticated
+            - private
+          example: private
+          description: >-
+            The read permission in effect for reserved attributes. It is
+            `authenticated` when none was set.
       additionalProperties: true
     IAMSettings:
       type: object
@@ -18723,7 +19110,11 @@ components:
           nullable: true
           additionalProperties: true
         transcoding_status:
-          description: The video transcoding status, if this is a video asset.
+          description: >-
+            The processing status of the asset: `pending`, `processing`,
+            `completed` or `failed`. Images and videos are processed
+            asynchronously, and `formats` or `video_metadata` are only filled in
+            once the status is `completed`.
           type: string
           nullable: true
           example: null
@@ -19050,6 +19441,18 @@ components:
             - PLN
             - NZD
             - CHF
+            - DKK
+            - HKD
+            - IDR
+            - INR
+            - KES
+            - MYR
+            - NOK
+            - PKR
+            - SGD
+            - TRY
+            - TWD
+            - ZAR
           example: EUR
       additionalProperties: false
     Ownership:
@@ -20113,6 +20516,13 @@ components:
               minLength: 1
               maxLength: 255
               nullable: false
+            organization_id:
+              description: >-
+                The ID of the organization to which the project will belong. Not
+                released yet. Please open a support ticket to express interest
+                in this feature detailing your use case.
+              type: string
+              nullable: true
           additionalProperties: false
     PublicApiKey:
       type: object
@@ -22112,6 +22522,99 @@ components:
           maxLength: 1500
           example: Premium
       additionalProperties: false
+    UpdateIAMAttributePermissionsRequest:
+      type: object
+      minProperties: 1
+      description: >-
+        Each omitted section and permission is left as it is. `null` clears a
+        permission: an override then inherits the custom attribute default, and
+        a default falls back to `authenticated`.
+      properties:
+        reserved_defaults:
+          type: object
+          required:
+            - read_permission
+          properties:
+            read_permission:
+              type: string
+              enum:
+                - authenticated
+                - private
+                - null
+              nullable: true
+              example: private
+              description: >-
+                The read permission of all reserved attributes (prefixed with
+                `$`).
+          additionalProperties: false
+        custom_defaults:
+          type: object
+          minProperties: 1
+          properties:
+            read_permission:
+              type: string
+              enum:
+                - authenticated
+                - private
+                - null
+              nullable: true
+              example: authenticated
+              description: The default read permission of custom attributes.
+            write_permission:
+              type: string
+              enum:
+                - authenticated
+                - authenticated_protected
+                - private
+                - private_protected
+                - null
+              nullable: true
+              example: private
+              description: The default write permission of custom attributes.
+          additionalProperties: false
+        custom_overrides:
+          type: array
+          minItems: 1
+          maxItems: 100
+          description: >-
+            Permissions for specific custom attributes. Each key can only appear
+            once. Keys that are not listed are left as they are.
+          items:
+            type: object
+            required:
+              - key
+            minProperties: 2
+            properties:
+              key:
+                type: string
+                example: favorite_cat
+                description: The name of the custom attribute.
+              read_permission:
+                type: string
+                enum:
+                  - authenticated
+                  - private
+                  - null
+                nullable: true
+                example: private
+                description: >-
+                  The read permission of this attribute. `null` makes it inherit
+                  the custom attribute default.
+              write_permission:
+                type: string
+                enum:
+                  - authenticated
+                  - authenticated_protected
+                  - private
+                  - private_protected
+                  - null
+                nullable: true
+                example: private_protected
+                description: >-
+                  The write permission of this attribute. `null` makes it
+                  inherit the custom attribute default.
+            additionalProperties: false
+      additionalProperties: false
     UpdateIAMAuthenticationMethodRequest:
       description: >-
         Fields to change. Only the fields of the type of the method are
@@ -22217,6 +22720,9 @@ components:
           description: >-
             Ids of the Apple apps that form the Apple App ID group of the
             method. Omit or set to null to cover every Apple app of the project.
+            Include the app that the Services ID is grouped with in Apple. Set
+            to an empty list for a web-only method, whose Services ID is grouped
+            with no app of the project; it then needs a `services_id`.
           type: array
           nullable: true
           items:
@@ -22231,6 +22737,15 @@ components:
             Developer account.
           type: string
           example: app1a2b3c4
+          minLength: 1
+          maxLength: 255
+          nullable: true
+        services_id:
+          description: >-
+            Apple Services ID used by Sign in with Apple on the web and on
+            Android. Matched against the `aud` claim of the ID token.
+          type: string
+          example: com.example.web
           minLength: 1
           maxLength: 255
           nullable: true
@@ -22453,6 +22968,17 @@ components:
           minLength: 1
           maxLength: 255
           example: app_1234567890abcdef
+        status:
+          description: >-
+            Whether the webhook integration sends events. A disabled webhook
+            integration keeps its settings but sends no events until it is set
+            back to active. Events that happen while it is disabled are not sent
+            later.
+          type: string
+          enum:
+            - active
+            - disabled
+          example: disabled
       additionalProperties: false
     VirtualCurrency:
       type: object
@@ -22664,6 +23190,7 @@ components:
         - created_at
         - app_id
         - environment
+        - status
       properties:
         object:
           description: >-
@@ -22735,6 +23262,16 @@ components:
           minLength: 1
           maxLength: 255
           example: app_1234567890abcdef
+        status:
+          description: >-
+            Whether the webhook integration sends events. A disabled webhook
+            integration keeps its settings but sends no events until it is set
+            back to active.
+          type: string
+          enum:
+            - active
+            - disabled
+          example: active
         signing_secret:
           description: >-
             The plaintext HMAC signing secret. Only returned in the response to
