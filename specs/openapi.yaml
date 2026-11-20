@@ -7408,7 +7408,7 @@ paths:
               Rename:
                 value:
                   name: Sign in with Google
-              Change the Google client id:
+              Change the Google web client ID:
                 value:
                   client_id: 1234567890-xyz.apps.googleusercontent.com
       responses:
@@ -10369,6 +10369,12 @@ paths:
                   app_id: app1a2b3c4
                   type: subscription
                   display_name: Premium Monthly 2023
+              Stripe price:
+                value:
+                  store_identifier: price_1MoBy5LkdIwHu7ixZhnattbh
+                  app_id: app1a2b3c4
+                  type: subscription
+                  display_name: Premium Monthly 2023
               Amazon:
                 value:
                   store_identifier: com.mysubscription.weekly
@@ -11619,7 +11625,7 @@ paths:
       operationId: get-authorized-subscription-management-url
       x-revenuecat-rate-limiting-domain: customer_information
       x-scopes:
-        - customer_information:subscriptions:read
+        - customer_information:subscriptions:read_write
       x-release-status: public
       tags:
         - Subscription
@@ -11672,9 +11678,13 @@ paths:
         '503':
           $ref: '#/components/responses/InternalError'
       description: >-
-        Get a secure, single-use URL that allows customers to access their Web
-        Billing customer portal.
-         This endpoint requires the following permission(s): <code>customer_information:subscriptions:read</code>. This endpoint belongs to the <strong>Customer Information</strong> domain, which has a default rate limit of <strong>480 requests per minute</strong>.
+        Get a URL that opens the customer portal for this subscription without
+        signing in. For Web Billing subscriptions, it's a single-use link to the
+        RevenueCat customer portal. For Paddle subscriptions, it's a Paddle
+        Customer Portal URL whose token stays valid for up to 24 hours and keeps
+        working even if the API key that requested it is revoked. Treat it as a
+        credential: give it only to the customer and don't store it.
+         This endpoint requires the following permission(s): <code>customer_information:subscriptions:read_write</code>. This endpoint belongs to the <strong>Customer Information</strong> domain, which has a default rate limit of <strong>480 requests per minute</strong>.
   /projects/{project_id}/subscriptions/{subscription_id}/entitlements:
     get:
       summary: Get a list of entitlements associated with a subscription
@@ -12660,7 +12670,6 @@ components:
               type: string
               nullable: true
               minLength: 1
-              maxLength: 20
               example: '81234567'
             custom_url_scheme:
               description: >-
@@ -13492,11 +13501,13 @@ components:
             A secure URL that provides temporary access to the subscription
             management portal. For RC Billing subscriptions, this is a
             single-use magic link to the RevenueCat customer portal. For Paddle
-            subscriptions, this is a short-lived authenticated Paddle Customer
-            Portal URL when the API key has the Customer portal session (Write)
-            permission and Paddle returns the required management URLs;
-            otherwise a non-authenticated URL (customer signs in via email) or
-            `null` if no URL can be generated.
+            subscriptions, this is an authenticated Paddle Customer Portal URL
+            when the Paddle API key has the Customer portal session (Write)
+            permission and Paddle returns the required management URLs. Paddle's
+            token in that URL stays valid for up to 24 hours and keeps working
+            even if the RevenueCat API key that requested it is revoked.
+            Otherwise it's a non-authenticated URL (customer signs in via
+            email), or `null` if no URL can be generated.
           nullable: true
           type: string
           example: >-
@@ -13635,6 +13646,7 @@ components:
             - 70-80
             - 80-90
             - 90-100
+            - null
           example: 60-70
         updated_at:
           description: When the app's benchmark data was last refreshed, in ms since epoch.
@@ -13746,12 +13758,16 @@ components:
           type: integer
           format: int64
         start_date:
-          description: Start date of the data range (ms since epoch)
+          description: >-
+            Start date of the data range (seconds since epoch, like each data
+            point's `cohort`)
           nullable: true
           type: integer
           format: int64
         end_date:
-          description: End date of the data range (ms since epoch)
+          description: >-
+            End date of the data range (seconds since epoch, like each data
+            point's `cohort`)
           nullable: true
           type: integer
           format: int64
@@ -14080,12 +14096,10 @@ components:
           example: 2
         scale:
           description: >-
-            Whether the values of this series are absolute amounts or
-            percentages of a baseline.
+            The scale this series belongs to. Charts that offer a scale selector
+            group their series by it, e.g. `absolute` / `relative` amounts or an
+            LTV window such as `30 days`. Values are chart-specific labels.
           type: string
-          enum:
-            - absolute
-            - relative
           example: absolute
         chartable:
           description: Whether the series is meaningful to plot.
@@ -15056,8 +15070,11 @@ components:
             - google
         client_id:
           description: >-
-            Google OAuth client id, matched against the `aud` claim of the ID
-            token.
+            Google OAuth web client ID, matched against the `aud` claim of the
+            ID token. Use the web client ID on every platform. iOS and Android
+            apps must pass it to the Google Sign-In SDK as the server client ID
+            (`GIDServerClientID` on iOS, `setServerClientId` on Android) so the
+            ID token's `aud` matches.
           type: string
           example: 1234567890-abc.apps.googleusercontent.com
           minLength: 1
@@ -15345,13 +15362,15 @@ components:
             'productId:basePlanId' for subscription products and SKU for
             one-time purchase products.
 
-            - For Stripe, the product identifier that always starts with
-            "prod_". RevenueCat selects the active, supported default price when
-            available, or the only active, supported price otherwise. If no
-            price can be selected, the product is created without a web price.
-            For projects that model Stripe products per price, the
-            `store_identifier` in the response is the Stripe price ID when a
-            price is selected.
+            - For Stripe, the Stripe product ID (starting with "prod_").
+            RevenueCat imports the price given in `price_identifier`, or
+            otherwise selects the active, supported default price when
+            available, or the only active, supported price. For projects that
+            model Stripe products per price, you can instead pass a Stripe price
+            ID (starting with "price_", or a legacy plan ID) without
+            `price_identifier`, and RevenueCat imports that price under its
+            Stripe product. In those projects, the `store_identifier` in the
+            response is the Stripe price ID.
 
             - For Amazon, if it's a subscription, the term SKU of the
             subscription. If it's a one-time purchase, the SKU of the product.
@@ -15364,9 +15383,9 @@ components:
           example: com.revenuecat.magicweather.monthly
         price_identifier:
           description: >-
-            The Stripe price identifier to import. When provided, the price must
-            exist, belong to the Stripe product, and be active and supported.
-            Only supported for Stripe products.
+            The Stripe price identifier to import when `store_identifier` is a
+            Stripe product ID. The price must exist, belong to that product, and
+            be active and supported. Only supported for Stripe products.
           nullable: true
           type: string
           minLength: 1
@@ -15737,21 +15756,25 @@ components:
           example: 1658399423658
         last_seen_app_version:
           nullable: true
+          maxLength: 200
           description: The last app version the customer was seen on
           type: string
           example: 1.0.0
         last_seen_country:
           nullable: true
+          maxLength: 2
           description: The last country the customer was seen in
           type: string
           example: US
         last_seen_platform:
           nullable: true
+          maxLength: 32
           description: The last platform the customer was seen on
           type: string
           example: android
         last_seen_platform_version:
           nullable: true
+          maxLength: 200
           description: The last platform version the customer was seen on
           type: string
           example: '35'
@@ -15759,7 +15782,6 @@ components:
           description: >-
             List of the entitlements currently active for the customer. This
             property is only available in the "Get a customer" endpoint.
-          nullable: true
           allOf:
             - $ref: '#/components/schemas/ListCustomerActiveEntitlements'
         experiment:
@@ -15770,7 +15792,6 @@ components:
           description: >-
             List of the attributes of the customer. This is an expandable
             property, only available in the "Get a customer" endpoint.
-          nullable: true
           allOf:
             - $ref: '#/components/schemas/ListCustomerAttributes'
       additionalProperties: false
@@ -17419,7 +17440,9 @@ components:
           enum:
             - google
         client_id:
-          description: Google OAuth client id.
+          description: >-
+            Google OAuth web client ID, matched against the `aud` claim of the
+            ID token.
           type: string
           example: 1234567890-abc.apps.googleusercontent.com
         id_token_iat_freshness_seconds:
@@ -19512,7 +19535,7 @@ components:
           format: int64
           example: 1658399423658
         products:
-          nullable: true
+          type: object
           required:
             - items
             - next_page
@@ -19764,13 +19787,11 @@ components:
           example: 3
         offering:
           description: The offering associated with this paywall. Expandable.
-          nullable: true
           $ref: '#/components/schemas/Offering'
         components:
           description: >-
             Published and draft components configurations for this paywall.
             Expandable.
-          nullable: true
           $ref: '#/components/schemas/PaywallComponents'
       additionalProperties: false
     PaywallComponents:
@@ -20344,7 +20365,12 @@ components:
         app:
           description: The app associated with the product
           nullable: true
-          $ref: '#/components/schemas/App'
+          anyOf:
+            - type: string
+              nullable: true
+              enum:
+                - null
+            - $ref: '#/components/schemas/App'
         indicative_price:
           description: >-
             The product's indicative price in the default currency/country (USD
@@ -21859,7 +21885,6 @@ components:
           properties:
             product:
               description: The product that will be active as of the next renewal
-              nullable: true
               allOf:
                 - $ref: '#/components/schemas/Product'
             current_period_starts_at:
@@ -21891,7 +21916,6 @@ components:
               description: >-
                 Expected auto renewal status for the next period. Omitted when
                 unchanged from the current subscription.
-              nullable: true
               type: string
               enum:
                 - will_renew
@@ -21905,7 +21929,6 @@ components:
               description: >-
                 Expected subscription status for the next period. Omitted when
                 unchanged from the current subscription.
-              nullable: true
               type: string
               enum:
                 - trialing
@@ -22046,12 +22069,20 @@ components:
             The revenue generated by the transaction in the customer's purchased
             currency
           nullable: true
-          oneOf:
+          anyOf:
+            - type: string
+              nullable: true
+              enum:
+                - null
             - $ref: '#/components/schemas/MonetaryAmount'
         revenue_in_usd:
           description: The revenue generated by the transaction in USD
           nullable: true
-          oneOf:
+          anyOf:
+            - type: string
+              nullable: true
+              enum:
+                - null
             - $ref: '#/components/schemas/MonetaryAmount'
         expiration_date:
           description: The expiration date of the transaction in ms since epoch
@@ -22665,7 +22696,7 @@ components:
         client_id:
           description: >-
             OAuth client id (`oidc`, `google`). Matched against the `aud` claim
-            of the ID token.
+            of the ID token. For `google`, this is the web client ID.
           type: string
           example: my-client-id
           maxLength: 2000
@@ -23079,6 +23110,7 @@ components:
         description:
           description: The description of the in-app currency (virtual currency).
           type: string
+          nullable: true
         name:
           description: The name of the in-app currency (virtual currency).
           type: string
