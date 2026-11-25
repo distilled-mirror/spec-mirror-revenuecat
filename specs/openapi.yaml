@@ -7556,6 +7556,216 @@ paths:
         <code>iam:settings:read_write</code>. This endpoint belongs to the
         <strong>Iam</strong> domain, which has a default rate limit of
         <strong>60 requests per minute</strong>.
+  /projects/{project_id}/integrations:
+    get:
+      summary: List integrations
+      operationId: list-integrations
+      x-revenuecat-rate-limiting-domain: project_configuration
+      x-scopes:
+        - project_configuration:integrations:read
+      x-release-status: beta
+      tags:
+        - Integration
+      parameters:
+        - name: project_id
+          description: ID of the project
+          required: true
+          in: path
+          schema:
+            type: string
+            maxLength: 255
+            example: proj1ab2c3d4
+        - name: vendor
+          in: query
+          description: Only return the integrations with this vendor
+          required: false
+          schema:
+            $ref: '#/components/schemas/IntegrationVendorName'
+        - name: starting_after
+          in: query
+          required: false
+          description: >-
+            Pagination cursor. Pass the id of the last item from the previous
+            page to fetch the next page; omit for the first page.
+          schema:
+            type: string
+            example: ent12354
+        - name: limit
+          in: query
+          required: false
+          description: >-
+            Maximum number of items to return per page. Values below 1 or above
+            100 are clamped to that range rather than rejected.
+          schema:
+            type: integer
+            example: 10
+            default: 20
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListIntegrations'
+          headers:
+            RevenueCat-Rate-Limit-Current-Usage:
+              $ref: '#/components/headers/RateLimitCurrentUsage'
+            RevenueCat-Rate-Limit-Current-Limit:
+              $ref: '#/components/headers/RateLimitCurrentLimit'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '423':
+          $ref: '#/components/responses/Locked'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        '503':
+          $ref: '#/components/responses/InternalError'
+      description: >-
+        This endpoint requires the following permission(s):
+        <code>project_configuration:integrations:read</code>. This endpoint
+        belongs to the <strong>Project Configuration</strong> domain, which has
+        a default rate limit of <strong>60 requests per minute</strong>.
+    post:
+      summary: Create an integration
+      operationId: create-integration
+      x-revenuecat-rate-limiting-domain: project_configuration
+      x-scopes:
+        - project_configuration:integrations:read_write
+      x-release-status: beta
+      tags:
+        - Integration
+      parameters:
+        - name: project_id
+          description: ID of the project
+          required: true
+          in: path
+          schema:
+            type: string
+            maxLength: 255
+            example: proj1ab2c3d4
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateIntegrationRequest'
+      responses:
+        '201':
+          description: Integration created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Integration'
+          headers:
+            RevenueCat-Rate-Limit-Current-Usage:
+              $ref: '#/components/headers/RateLimitCurrentUsage'
+            RevenueCat-Rate-Limit-Current-Limit:
+              $ref: '#/components/headers/RateLimitCurrentLimit'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '423':
+          $ref: '#/components/responses/Locked'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        '503':
+          $ref: '#/components/responses/InternalError'
+      description: >-
+        This endpoint requires the following permission(s):
+        <code>project_configuration:integrations:read_write</code>. This
+        endpoint belongs to the <strong>Project Configuration</strong> domain,
+        which has a default rate limit of <strong>60 requests per
+        minute</strong>.
+  /projects/{project_id}/integrations/vendors:
+    get:
+      summary: List integration vendors
+      operationId: list-integration-vendors
+      x-revenuecat-rate-limiting-domain: project_configuration
+      x-scopes:
+        - project_configuration:integrations:read
+      x-release-status: beta
+      tags:
+        - Integration
+      parameters:
+        - name: project_id
+          description: ID of the project
+          required: true
+          in: path
+          schema:
+            type: string
+            maxLength: 255
+            example: proj1ab2c3d4
+        - name: starting_after
+          in: query
+          required: false
+          description: >-
+            Pagination cursor. Pass the id of the last item from the previous
+            page to fetch the next page; omit for the first page.
+          schema:
+            type: string
+            example: ent12354
+        - name: limit
+          in: query
+          required: false
+          description: >-
+            Maximum number of items to return per page. Values below 1 or above
+            100 are clamped to that range rather than rejected.
+          schema:
+            type: integer
+            example: 10
+            default: 20
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListIntegrationVendors'
+          headers:
+            RevenueCat-Rate-Limit-Current-Usage:
+              $ref: '#/components/headers/RateLimitCurrentUsage'
+            RevenueCat-Rate-Limit-Current-Limit:
+              $ref: '#/components/headers/RateLimitCurrentLimit'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '423':
+          $ref: '#/components/responses/Locked'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        '503':
+          $ref: '#/components/responses/InternalError'
+      description: >-
+        This endpoint requires the following permission(s):
+        <code>project_configuration:integrations:read</code>. This endpoint
+        belongs to the <strong>Project Configuration</strong> domain, which has
+        a default rate limit of <strong>60 requests per minute</strong>.
   /projects/{project_id}/integrations/webhooks:
     get:
       summary: List webhook integrations
@@ -7855,6 +8065,203 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/WebhookIntegration'
+          headers:
+            RevenueCat-Rate-Limit-Current-Usage:
+              $ref: '#/components/headers/RateLimitCurrentUsage'
+            RevenueCat-Rate-Limit-Current-Limit:
+              $ref: '#/components/headers/RateLimitCurrentLimit'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '423':
+          $ref: '#/components/responses/Locked'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        '503':
+          $ref: '#/components/responses/InternalError'
+      description: >-
+        This endpoint requires the following permission(s):
+        <code>project_configuration:integrations:read_write</code>. This
+        endpoint belongs to the <strong>Project Configuration</strong> domain,
+        which has a default rate limit of <strong>60 requests per
+        minute</strong>.
+  /projects/{project_id}/integrations/{integration_id}:
+    delete:
+      summary: Delete an integration
+      operationId: delete-integration
+      x-revenuecat-rate-limiting-domain: project_configuration
+      x-scopes:
+        - project_configuration:integrations:read_write
+      x-release-status: beta
+      tags:
+        - Integration
+      parameters:
+        - name: project_id
+          description: ID of the project
+          required: true
+          in: path
+          schema:
+            type: string
+            maxLength: 255
+            example: proj1ab2c3d4
+        - name: integration_id
+          in: path
+          description: The ID of the integration
+          required: true
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 255
+          example: intgr1a2b3c4d5e
+      responses:
+        '200':
+          description: Integration deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeletedObject'
+          headers:
+            RevenueCat-Rate-Limit-Current-Usage:
+              $ref: '#/components/headers/RateLimitCurrentUsage'
+            RevenueCat-Rate-Limit-Current-Limit:
+              $ref: '#/components/headers/RateLimitCurrentLimit'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '423':
+          $ref: '#/components/responses/Locked'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        '503':
+          $ref: '#/components/responses/InternalError'
+      description: >-
+        This endpoint requires the following permission(s):
+        <code>project_configuration:integrations:read_write</code>. This
+        endpoint belongs to the <strong>Project Configuration</strong> domain,
+        which has a default rate limit of <strong>60 requests per
+        minute</strong>.
+    get:
+      summary: Get an integration
+      operationId: get-integration
+      x-revenuecat-rate-limiting-domain: project_configuration
+      x-scopes:
+        - project_configuration:integrations:read
+      x-release-status: beta
+      tags:
+        - Integration
+      parameters:
+        - name: project_id
+          description: ID of the project
+          required: true
+          in: path
+          schema:
+            type: string
+            maxLength: 255
+            example: proj1ab2c3d4
+        - name: integration_id
+          in: path
+          description: The ID of the integration
+          required: true
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 255
+          example: intgr1a2b3c4d5e
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Integration'
+          headers:
+            RevenueCat-Rate-Limit-Current-Usage:
+              $ref: '#/components/headers/RateLimitCurrentUsage'
+            RevenueCat-Rate-Limit-Current-Limit:
+              $ref: '#/components/headers/RateLimitCurrentLimit'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '423':
+          $ref: '#/components/responses/Locked'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        '503':
+          $ref: '#/components/responses/InternalError'
+      description: >-
+        This endpoint requires the following permission(s):
+        <code>project_configuration:integrations:read</code>. This endpoint
+        belongs to the <strong>Project Configuration</strong> domain, which has
+        a default rate limit of <strong>60 requests per minute</strong>.
+    post:
+      summary: Update an integration
+      operationId: update-integration
+      x-revenuecat-rate-limiting-domain: project_configuration
+      x-scopes:
+        - project_configuration:integrations:read_write
+      x-release-status: beta
+      tags:
+        - Integration
+      parameters:
+        - name: project_id
+          description: ID of the project
+          required: true
+          in: path
+          schema:
+            type: string
+            maxLength: 255
+            example: proj1ab2c3d4
+        - name: integration_id
+          in: path
+          description: The ID of the integration
+          required: true
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 255
+          example: intgr1a2b3c4d5e
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateIntegrationRequest'
+      responses:
+        '200':
+          description: Integration updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Integration'
           headers:
             RevenueCat-Rate-Limit-Current-Usage:
               $ref: '#/components/headers/RateLimitCurrentUsage'
@@ -11680,10 +12087,11 @@ paths:
       description: >-
         Get a URL that opens the customer portal for this subscription without
         signing in. For Web Billing subscriptions, it's a single-use link to the
-        RevenueCat customer portal. For Paddle subscriptions, it's a Paddle
-        Customer Portal URL whose token stays valid for up to 24 hours and keeps
-        working even if the API key that requested it is revoked. Treat it as a
-        credential: give it only to the customer and don't store it.
+        RevenueCat customer portal that expires if it isn't opened within 5
+        minutes. For Paddle subscriptions, it's a Paddle Customer Portal URL
+        whose token stays valid for up to 24 hours and keeps working even if the
+        API key that requested it is revoked. Treat it as a credential: give it
+        only to the customer and don't store it.
          This endpoint requires the following permission(s): <code>customer_information:subscriptions:read_write</code>. This endpoint belongs to the <strong>Customer Information</strong> domain, which has a default rate limit of <strong>480 requests per minute</strong>.
   /projects/{project_id}/subscriptions/{subscription_id}/entitlements:
     get:
@@ -13500,14 +13908,15 @@ components:
           description: >-
             A secure URL that provides temporary access to the subscription
             management portal. For RC Billing subscriptions, this is a
-            single-use magic link to the RevenueCat customer portal. For Paddle
-            subscriptions, this is an authenticated Paddle Customer Portal URL
-            when the Paddle API key has the Customer portal session (Write)
-            permission and Paddle returns the required management URLs. Paddle's
-            token in that URL stays valid for up to 24 hours and keeps working
-            even if the RevenueCat API key that requested it is revoked.
-            Otherwise it's a non-authenticated URL (customer signs in via
-            email), or `null` if no URL can be generated.
+            single-use magic link to the RevenueCat customer portal that expires
+            if it isn't opened within 5 minutes. For Paddle subscriptions, this
+            is an authenticated Paddle Customer Portal URL when the Paddle API
+            key has the Customer portal session (Write) permission and Paddle
+            returns the required management URLs. Paddle's token in that URL
+            stays valid for up to 24 hours and keeps working even if the
+            RevenueCat API key that requested it is revoked. Otherwise it's a
+            non-authenticated URL (customer signs in via email), or `null` if no
+            URL can be generated.
           nullable: true
           type: string
           example: >-
@@ -13818,14 +14227,32 @@ components:
             `periods[period]` for the label, unit and scale of each point
             instead of assuming `period` is
 
-            the month number.
+            the month number. Non-realtime (`realtime=false`) cohort charts
+            instead return one array
+
+            per cohort: the cohort label followed by its values, e.g. `["Total",
+            3900, 1500]`.
+
+            Non-realtime segmented charts with more than one measure return one
+            array per date: the
+
+            date followed by one array per entry in `segments`, holding that
+            segment's value for each
+
+            measure, e.g. `[1642075008, [100, 20], [10, 50]]`.
           type: array
           items:
             oneOf:
               - type: array
                 items:
-                  type: number
-                  nullable: true
+                  anyOf:
+                    - type: number
+                      nullable: true
+                    - type: string
+                    - type: array
+                      items:
+                        type: number
+                        nullable: true
               - type: object
                 additionalProperties: true
         summary:
@@ -15210,6 +15637,13 @@ components:
           maximum: 60
           nullable: true
       additionalProperties: false
+    CreateIntegrationRequest:
+      oneOf:
+        - $ref: '#/components/schemas/CreateMixpanelIntegrationRequest'
+      discriminator:
+        propertyName: vendor
+        mapping:
+          mixpanel: '#/components/schemas/CreateMixpanelIntegrationRequest'
     CreateMediaAsset400Response:
       allOf:
         - $ref: '#/components/schemas/Error'
@@ -15250,6 +15684,23 @@ components:
           minLength: 1
           maxLength: 2796204
           example: UklGRiIAAABXRUJQVlA4IBYAAAAwAQCdASoBAAEADsD+JaQAA3AAAAAA
+    CreateMixpanelIntegrationRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - vendor
+        - settings
+      properties:
+        vendor:
+          description: The vendor of the integration. It cannot be changed afterwards.
+          type: string
+          enum:
+            - mixpanel
+          example: mixpanel
+        status:
+          $ref: '#/components/schemas/IntegrationStatusInput'
+        settings:
+          $ref: '#/components/schemas/MixpanelIntegrationSettingsInput'
     CreateOfferingRequest:
       type: object
       required:
@@ -16059,14 +16510,17 @@ components:
             - discount
             - discount_code
             - entitlement
+            - entitlement_ad_reward
             - experiment
             - iam_authentication_method
+            - integration
             - offering
             - package
             - paywall
             - product
             - targeting_rule
             - virtual_currency
+            - virtual_currency_ad_reward
             - webhook_integration
           type: string
         id:
@@ -17771,6 +18225,65 @@ components:
         amount_micros:
           $ref: '#/components/schemas/AmountMicros'
       additionalProperties: false
+    Integration:
+      oneOf:
+        - $ref: '#/components/schemas/MixpanelIntegration'
+      discriminator:
+        propertyName: vendor
+        mapping:
+          mixpanel: '#/components/schemas/MixpanelIntegration'
+    IntegrationStatus:
+      type: string
+      description: >-
+        Whether the integration sends events. A disabled integration keeps its
+        settings but nothing is sent to it until it is set back to active. An
+        integration needs its credentials to be active, so one that is still
+        waiting for them is disabled.
+      enum:
+        - active
+        - disabled
+      example: active
+    IntegrationStatusInput:
+      type: string
+      description: >-
+        Whether the integration sends events. On create it is `active` unless
+        sent. An integration can be created `disabled` without its credentials,
+        to be completed later; setting it to `active` is refused while a
+        credential it needs is missing, or while no event would be sent.
+      enum:
+        - active
+        - disabled
+      example: disabled
+    IntegrationVendor:
+      type: object
+      description: >-
+        A vendor an integration can be created with: a third party RevenueCat
+        can send events to. It is the same for every project.
+      required:
+        - object
+        - vendor
+        - display_name
+      properties:
+        object:
+          description: >-
+            String representing the object's type. Objects of the same type
+            share the same value.
+          enum:
+            - integration_vendor
+          type: string
+        vendor:
+          $ref: '#/components/schemas/IntegrationVendorName'
+        display_name:
+          description: The name of the vendor.
+          type: string
+          example: Mixpanel
+      additionalProperties: false
+    IntegrationVendorName:
+      type: string
+      description: The identifier of an integration vendor.
+      enum:
+        - mixpanel
+      example: mixpanel
     Invoice:
       type: object
       required:
@@ -18458,6 +18971,76 @@ components:
           type: string
           example: /v2/projects/proj1ab2c3d4/iam/authentication_methods
           maxLength: 5000
+      additionalProperties: false
+    ListIntegrationVendors:
+      type: object
+      required:
+        - items
+        - next_page
+        - object
+        - url
+      title: IntegrationVendorList
+      properties:
+        object:
+          description: >-
+            String representing the object's type. Objects of the same type
+            share the same value. Always has the value `list`.
+          enum:
+            - list
+          type: string
+        items:
+          description: The integration vendors available through the API.
+          items:
+            $ref: '#/components/schemas/IntegrationVendor'
+          type: array
+        next_page:
+          description: >-
+            URL to access the next page of integration vendors. If not present /
+            null, there is no next page
+          type: string
+          nullable: true
+          example: >-
+            /v2/projects/proj1ab2c3d4/integrations/vendors?starting_after=mixpanel
+        url:
+          description: The URL where this list can be accessed.
+          maxLength: 5000
+          type: string
+          example: /v2/projects/proj1ab2c3d4/integrations/vendors
+      additionalProperties: false
+    ListIntegrations:
+      type: object
+      required:
+        - items
+        - next_page
+        - object
+        - url
+      title: IntegrationList
+      properties:
+        object:
+          description: >-
+            String representing the object's type. Objects of the same type
+            share the same value. Always has the value `list`.
+          enum:
+            - list
+          type: string
+        items:
+          description: The integrations of the project.
+          items:
+            $ref: '#/components/schemas/Integration'
+          type: array
+        next_page:
+          description: >-
+            URL to access the next page of integrations. If not present / null,
+            there is no next page
+          type: string
+          nullable: true
+          example: >-
+            /v2/projects/proj1ab2c3d4/integrations?starting_after=intgr1a2b3c4d5e
+        url:
+          description: The URL where this list can be accessed.
+          maxLength: 5000
+          type: string
+          example: /v2/projects/proj1ab2c3d4/integrations
       additionalProperties: false
     ListMediaAssets:
       type: object
@@ -19181,6 +19764,914 @@ components:
           nullable: true
           example: 1024
       additionalProperties: false
+    MixpanelIntegration:
+      type: object
+      description: An integration of a project with Mixpanel.
+      required:
+        - object
+        - id
+        - project_id
+        - status
+        - created_at
+        - vendor
+        - settings
+      properties:
+        object:
+          description: >-
+            String representing the object's type. Objects of the same type
+            share the same value.
+          enum:
+            - integration
+          type: string
+        id:
+          description: The ID of the integration
+          type: string
+          minLength: 1
+          maxLength: 255
+          example: intgr1a2b3c4d5e
+        project_id:
+          description: ID of the project to which the integration belongs
+          type: string
+          example: proj1ab2c3d4
+        status:
+          $ref: '#/components/schemas/IntegrationStatus'
+        created_at:
+          description: The date when the integration was created in ms since epoch
+          type: integer
+          format: int64
+          nullable: true
+          example: 1658399423658
+        vendor:
+          description: The vendor the integration sends events to.
+          type: string
+          enum:
+            - mixpanel
+          example: mixpanel
+        settings:
+          $ref: '#/components/schemas/MixpanelIntegrationSettings'
+      additionalProperties: false
+    MixpanelIntegrationSettings:
+      description: >-
+        The settings of a Mixpanel integration. A secret is never returned:
+        `has_<secret>` says whether it is set. Every event the vendor can send
+        is under `events`, whether it is on or off.
+      type: object
+      additionalProperties: true
+      required:
+        - engage_url
+        - events
+        - has_mixpanel_sandbox_token
+        - has_mixpanel_secret_key
+        - has_mixpanel_token
+        - revenue_reporting_mode
+        - should_send_paywall_events
+        - should_send_workflows_events
+        - total_spent_user_property
+        - track_url
+      properties:
+        engage_url:
+          type: string
+          enum:
+            - https://api.mixpanel.com/engage/
+            - https://api-eu.mixpanel.com/engage/
+            - https://api-in.mixpanel.com/engage/
+            - null
+          nullable: true
+          description: >-
+            The engage endpoint, for a project with EU or India data residency.
+            The US endpoint when not set.
+        events:
+          description: The events this integration can send, each with its own settings.
+          type: object
+          additionalProperties: true
+          required:
+            - initial_purchase_event
+            - trial_started_event
+            - trial_converted_event
+            - trial_cancelled_event
+            - renewal_event
+            - cancellation_event
+            - non_renewing_purchase_event
+            - uncancellation_event
+            - subscription_paused_event
+            - expiration_event
+            - billing_issue_event
+            - product_change_event
+            - paywall_impression_event
+            - paywall_close_event
+            - paywall_cancel_event
+            - paywall_component_interacted_event
+            - paywall_exit_offer_event
+            - workflows_purchase_event
+            - workflows_step_completed_event
+            - workflows_step_started_event
+            - workflows_non_checkout_completion_event
+            - purchase_redeemed_event
+          properties:
+            initial_purchase_event:
+              description: A first purchase of a subscription that does not start a trial.
+              x-event-kind: initial_purchase
+              type: object
+              additionalProperties: true
+              required:
+                - name
+                - enabled
+              properties:
+                name:
+                  type: string
+                  nullable: true
+                  description: The name the event is sent under.
+                enabled:
+                  type: boolean
+                  description: Whether the event is sent.
+            trial_started_event:
+              description: A first purchase of a subscription that starts a free trial.
+              x-event-kind: trial_started
+              type: object
+              additionalProperties: true
+              required:
+                - name
+                - enabled
+              properties:
+                name:
+                  type: string
+                  nullable: true
+                  description: The name the event is sent under.
+                enabled:
+                  type: boolean
+                  description: Whether the event is sent.
+            trial_converted_event:
+              description: The renewal that turns a free trial into a paid subscription.
+              x-event-kind: trial_converted
+              type: object
+              additionalProperties: true
+              required:
+                - name
+                - enabled
+              properties:
+                name:
+                  type: string
+                  nullable: true
+                  description: The name the event is sent under.
+                enabled:
+                  type: boolean
+                  description: Whether the event is sent.
+            trial_cancelled_event:
+              description: A cancellation during a free trial.
+              x-event-kind: trial_cancelled
+              type: object
+              additionalProperties: true
+              required:
+                - name
+                - enabled
+              properties:
+                name:
+                  type: string
+                  nullable: true
+                  description: The name the event is sent under.
+                enabled:
+                  type: boolean
+                  description: Whether the event is sent.
+            renewal_event:
+              description: A renewal of a paid subscription.
+              x-event-kind: renewal
+              type: object
+              additionalProperties: true
+              required:
+                - name
+                - enabled
+              properties:
+                name:
+                  type: string
+                  nullable: true
+                  description: The name the event is sent under.
+                enabled:
+                  type: boolean
+                  description: Whether the event is sent.
+            cancellation_event:
+              description: A cancellation of a paid subscription.
+              x-event-kind: cancellation
+              type: object
+              additionalProperties: true
+              required:
+                - name
+                - enabled
+              properties:
+                name:
+                  type: string
+                  nullable: true
+                  description: The name the event is sent under.
+                enabled:
+                  type: boolean
+                  description: Whether the event is sent.
+            non_renewing_purchase_event:
+              description: A purchase that does not renew.
+              x-event-kind: non_renewing_purchase
+              type: object
+              additionalProperties: true
+              required:
+                - name
+                - enabled
+              properties:
+                name:
+                  type: string
+                  nullable: true
+                  description: The name the event is sent under.
+                enabled:
+                  type: boolean
+                  description: Whether the event is sent.
+            uncancellation_event:
+              description: A cancelled subscription set to renew again.
+              x-event-kind: uncancellation
+              type: object
+              additionalProperties: true
+              required:
+                - name
+                - enabled
+              properties:
+                name:
+                  type: string
+                  nullable: true
+                  description: The name the event is sent under.
+                enabled:
+                  type: boolean
+                  description: Whether the event is sent.
+            subscription_paused_event:
+              description: A subscription paused by the customer.
+              x-event-kind: subscription_paused
+              type: object
+              additionalProperties: true
+              required:
+                - name
+                - enabled
+              properties:
+                name:
+                  type: string
+                  nullable: true
+                  description: The name the event is sent under.
+                enabled:
+                  type: boolean
+                  description: Whether the event is sent.
+            expiration_event:
+              description: A subscription that expired.
+              x-event-kind: expiration
+              type: object
+              additionalProperties: true
+              required:
+                - name
+                - enabled
+              properties:
+                name:
+                  type: string
+                  nullable: true
+                  description: The name the event is sent under.
+                enabled:
+                  type: boolean
+                  description: Whether the event is sent.
+            billing_issue_event:
+              description: A failed attempt to charge the customer.
+              x-event-kind: billing_issue
+              type: object
+              additionalProperties: true
+              required:
+                - name
+                - enabled
+              properties:
+                name:
+                  type: string
+                  nullable: true
+                  description: The name the event is sent under.
+                enabled:
+                  type: boolean
+                  description: Whether the event is sent.
+            product_change_event:
+              description: A change of the product of a subscription.
+              x-event-kind: product_change
+              type: object
+              additionalProperties: true
+              required:
+                - name
+                - enabled
+              properties:
+                name:
+                  type: string
+                  nullable: true
+                  description: The name the event is sent under.
+                enabled:
+                  type: boolean
+                  description: Whether the event is sent.
+            paywall_impression_event:
+              description: A paywall shown.
+              x-event-kind: paywall_impression
+              type: object
+              additionalProperties: true
+              required:
+                - name
+                - enabled
+              properties:
+                name:
+                  type: string
+                  nullable: true
+                  description: The name the event is sent under.
+                enabled:
+                  type: boolean
+                  description: Whether the event is sent.
+            paywall_close_event:
+              description: A paywall closed.
+              x-event-kind: paywall_close
+              type: object
+              additionalProperties: true
+              required:
+                - name
+                - enabled
+              properties:
+                name:
+                  type: string
+                  nullable: true
+                  description: The name the event is sent under.
+                enabled:
+                  type: boolean
+                  description: Whether the event is sent.
+            paywall_cancel_event:
+              description: A purchase cancelled from a paywall.
+              x-event-kind: paywall_cancel
+              type: object
+              additionalProperties: true
+              required:
+                - name
+                - enabled
+              properties:
+                name:
+                  type: string
+                  nullable: true
+                  description: The name the event is sent under.
+                enabled:
+                  type: boolean
+                  description: Whether the event is sent.
+            paywall_component_interacted_event:
+              description: An interaction with a paywall component.
+              x-event-kind: paywall_component_interacted
+              type: object
+              additionalProperties: true
+              required:
+                - name
+                - enabled
+              properties:
+                name:
+                  type: string
+                  nullable: true
+                  description: The name the event is sent under.
+                enabled:
+                  type: boolean
+                  description: Whether the event is sent.
+            paywall_exit_offer_event:
+              description: An exit offer shown on a paywall.
+              x-event-kind: paywall_exit_offer
+              type: object
+              additionalProperties: true
+              required:
+                - name
+                - enabled
+              properties:
+                name:
+                  type: string
+                  nullable: true
+                  description: The name the event is sent under.
+                enabled:
+                  type: boolean
+                  description: Whether the event is sent.
+            workflows_purchase_event:
+              description: A purchase made in a funnel.
+              x-event-kind: workflows_purchase
+              type: object
+              additionalProperties: true
+              required:
+                - name
+                - enabled
+              properties:
+                name:
+                  type: string
+                  nullable: true
+                  description: The name the event is sent under.
+                enabled:
+                  type: boolean
+                  description: Whether the event is sent.
+            workflows_step_completed_event:
+              description: A funnel step completed.
+              x-event-kind: workflows_step_completed
+              type: object
+              additionalProperties: true
+              required:
+                - name
+                - enabled
+              properties:
+                name:
+                  type: string
+                  nullable: true
+                  description: The name the event is sent under.
+                enabled:
+                  type: boolean
+                  description: Whether the event is sent.
+            workflows_step_started_event:
+              description: A funnel step started.
+              x-event-kind: workflows_step_started
+              type: object
+              additionalProperties: true
+              required:
+                - name
+                - enabled
+              properties:
+                name:
+                  type: string
+                  nullable: true
+                  description: The name the event is sent under.
+                enabled:
+                  type: boolean
+                  description: Whether the event is sent.
+            workflows_non_checkout_completion_event:
+              description: A funnel completed without a checkout.
+              x-event-kind: workflows_non_checkout_completion
+              type: object
+              additionalProperties: true
+              required:
+                - name
+                - enabled
+              properties:
+                name:
+                  type: string
+                  nullable: true
+                  description: The name the event is sent under.
+                enabled:
+                  type: boolean
+                  description: Whether the event is sent.
+            purchase_redeemed_event:
+              description: A web purchase redeemed in the app.
+              x-event-kind: purchase_redeemed
+              type: object
+              additionalProperties: true
+              required:
+                - name
+                - enabled
+              properties:
+                name:
+                  type: string
+                  nullable: true
+                  description: The name the event is sent under.
+                enabled:
+                  type: boolean
+                  description: Whether the event is sent.
+        has_mixpanel_sandbox_token:
+          type: boolean
+          description: Whether `mixpanel_sandbox_token` is set.
+        has_mixpanel_secret_key:
+          type: boolean
+          description: Whether `mixpanel_secret_key` is set.
+        has_mixpanel_token:
+          type: boolean
+          description: Whether `mixpanel_token` is set.
+        revenue_reporting_mode:
+          type: string
+          enum:
+            - gross
+            - net_of_commission
+            - net_of_commission_and_taxes
+            - null
+          nullable: true
+          description: >-
+            The revenue reported with each event: gross, net of the store
+            commission, or net of the commission and taxes. When not set: gross,
+            or net of the store commission if the integration has the older
+            report-proceeds option on.
+        should_send_paywall_events:
+          type: boolean
+          description: >-
+            Whether paywall events are sent. While off, none is sent, whatever
+            its own `enabled` says.
+        should_send_workflows_events:
+          type: boolean
+          description: >-
+            Whether funnel events are sent. While off, none is sent, whatever
+            its own `enabled` says.
+        total_spent_user_property:
+          type: string
+          nullable: true
+          description: >-
+            The user property that accumulates a customer's revenue in USD. Not
+            sent when empty.
+        track_url:
+          type: string
+          enum:
+            - https://api.mixpanel.com/track/
+            - https://api-eu.mixpanel.com/track/
+            - https://api-in.mixpanel.com/track/
+            - null
+          nullable: true
+          description: >-
+            The track endpoint, for a project with EU or India data residency.
+            The US endpoint when not set.
+    MixpanelIntegrationSettingsInput:
+      description: >-
+        The settings of a Mixpanel integration that can be written. On update, a
+        setting that is not sent keeps its value, and a secret sent as `null` is
+        cleared. Under `events`, an enabled event needs a name. On create an
+        event that is not sent is off, and one that is sent is enabled unless it
+        says otherwise. On update an event that is not sent keeps its value, and
+        so does each attribute that is not sent.
+      type: object
+      additionalProperties: false
+      properties:
+        engage_url:
+          type: string
+          enum:
+            - https://api.mixpanel.com/engage/
+            - https://api-eu.mixpanel.com/engage/
+            - https://api-in.mixpanel.com/engage/
+            - null
+          nullable: true
+          description: >-
+            The engage endpoint, for a project with EU or India data residency.
+            The US endpoint when not set.
+        events:
+          description: The events this integration can send, each with its own settings.
+          type: object
+          additionalProperties: false
+          properties:
+            initial_purchase_event:
+              description: A first purchase of a subscription that does not start a trial.
+              x-event-kind: initial_purchase
+              type: object
+              additionalProperties: false
+              properties:
+                name:
+                  type: string
+                  pattern: \S
+                  nullable: true
+                  description: The name the event is sent under.
+                enabled:
+                  type: boolean
+                  description: Whether the event is sent.
+            trial_started_event:
+              description: A first purchase of a subscription that starts a free trial.
+              x-event-kind: trial_started
+              type: object
+              additionalProperties: false
+              properties:
+                name:
+                  type: string
+                  pattern: \S
+                  nullable: true
+                  description: The name the event is sent under.
+                enabled:
+                  type: boolean
+                  description: Whether the event is sent.
+            trial_converted_event:
+              description: The renewal that turns a free trial into a paid subscription.
+              x-event-kind: trial_converted
+              type: object
+              additionalProperties: false
+              properties:
+                name:
+                  type: string
+                  pattern: \S
+                  nullable: true
+                  description: The name the event is sent under.
+                enabled:
+                  type: boolean
+                  description: Whether the event is sent.
+            trial_cancelled_event:
+              description: A cancellation during a free trial.
+              x-event-kind: trial_cancelled
+              type: object
+              additionalProperties: false
+              properties:
+                name:
+                  type: string
+                  pattern: \S
+                  nullable: true
+                  description: The name the event is sent under.
+                enabled:
+                  type: boolean
+                  description: Whether the event is sent.
+            renewal_event:
+              description: A renewal of a paid subscription.
+              x-event-kind: renewal
+              type: object
+              additionalProperties: false
+              properties:
+                name:
+                  type: string
+                  pattern: \S
+                  nullable: true
+                  description: The name the event is sent under.
+                enabled:
+                  type: boolean
+                  description: Whether the event is sent.
+            cancellation_event:
+              description: A cancellation of a paid subscription.
+              x-event-kind: cancellation
+              type: object
+              additionalProperties: false
+              properties:
+                name:
+                  type: string
+                  pattern: \S
+                  nullable: true
+                  description: The name the event is sent under.
+                enabled:
+                  type: boolean
+                  description: Whether the event is sent.
+            non_renewing_purchase_event:
+              description: A purchase that does not renew.
+              x-event-kind: non_renewing_purchase
+              type: object
+              additionalProperties: false
+              properties:
+                name:
+                  type: string
+                  pattern: \S
+                  nullable: true
+                  description: The name the event is sent under.
+                enabled:
+                  type: boolean
+                  description: Whether the event is sent.
+            uncancellation_event:
+              description: A cancelled subscription set to renew again.
+              x-event-kind: uncancellation
+              type: object
+              additionalProperties: false
+              properties:
+                name:
+                  type: string
+                  pattern: \S
+                  nullable: true
+                  description: The name the event is sent under.
+                enabled:
+                  type: boolean
+                  description: Whether the event is sent.
+            subscription_paused_event:
+              description: A subscription paused by the customer.
+              x-event-kind: subscription_paused
+              type: object
+              additionalProperties: false
+              properties:
+                name:
+                  type: string
+                  pattern: \S
+                  nullable: true
+                  description: The name the event is sent under.
+                enabled:
+                  type: boolean
+                  description: Whether the event is sent.
+            expiration_event:
+              description: A subscription that expired.
+              x-event-kind: expiration
+              type: object
+              additionalProperties: false
+              properties:
+                name:
+                  type: string
+                  pattern: \S
+                  nullable: true
+                  description: The name the event is sent under.
+                enabled:
+                  type: boolean
+                  description: Whether the event is sent.
+            billing_issue_event:
+              description: A failed attempt to charge the customer.
+              x-event-kind: billing_issue
+              type: object
+              additionalProperties: false
+              properties:
+                name:
+                  type: string
+                  pattern: \S
+                  nullable: true
+                  description: The name the event is sent under.
+                enabled:
+                  type: boolean
+                  description: Whether the event is sent.
+            product_change_event:
+              description: A change of the product of a subscription.
+              x-event-kind: product_change
+              type: object
+              additionalProperties: false
+              properties:
+                name:
+                  type: string
+                  pattern: \S
+                  nullable: true
+                  description: The name the event is sent under.
+                enabled:
+                  type: boolean
+                  description: Whether the event is sent.
+            paywall_impression_event:
+              description: A paywall shown.
+              x-event-kind: paywall_impression
+              type: object
+              additionalProperties: false
+              properties:
+                name:
+                  type: string
+                  pattern: \S
+                  nullable: true
+                  description: The name the event is sent under.
+                enabled:
+                  type: boolean
+                  description: Whether the event is sent.
+            paywall_close_event:
+              description: A paywall closed.
+              x-event-kind: paywall_close
+              type: object
+              additionalProperties: false
+              properties:
+                name:
+                  type: string
+                  pattern: \S
+                  nullable: true
+                  description: The name the event is sent under.
+                enabled:
+                  type: boolean
+                  description: Whether the event is sent.
+            paywall_cancel_event:
+              description: A purchase cancelled from a paywall.
+              x-event-kind: paywall_cancel
+              type: object
+              additionalProperties: false
+              properties:
+                name:
+                  type: string
+                  pattern: \S
+                  nullable: true
+                  description: The name the event is sent under.
+                enabled:
+                  type: boolean
+                  description: Whether the event is sent.
+            paywall_component_interacted_event:
+              description: An interaction with a paywall component.
+              x-event-kind: paywall_component_interacted
+              type: object
+              additionalProperties: false
+              properties:
+                name:
+                  type: string
+                  pattern: \S
+                  nullable: true
+                  description: The name the event is sent under.
+                enabled:
+                  type: boolean
+                  description: Whether the event is sent.
+            paywall_exit_offer_event:
+              description: An exit offer shown on a paywall.
+              x-event-kind: paywall_exit_offer
+              type: object
+              additionalProperties: false
+              properties:
+                name:
+                  type: string
+                  pattern: \S
+                  nullable: true
+                  description: The name the event is sent under.
+                enabled:
+                  type: boolean
+                  description: Whether the event is sent.
+            workflows_purchase_event:
+              description: A purchase made in a funnel.
+              x-event-kind: workflows_purchase
+              type: object
+              additionalProperties: false
+              properties:
+                name:
+                  type: string
+                  pattern: \S
+                  nullable: true
+                  description: The name the event is sent under.
+                enabled:
+                  type: boolean
+                  description: Whether the event is sent.
+            workflows_step_completed_event:
+              description: A funnel step completed.
+              x-event-kind: workflows_step_completed
+              type: object
+              additionalProperties: false
+              properties:
+                name:
+                  type: string
+                  pattern: \S
+                  nullable: true
+                  description: The name the event is sent under.
+                enabled:
+                  type: boolean
+                  description: Whether the event is sent.
+            workflows_step_started_event:
+              description: A funnel step started.
+              x-event-kind: workflows_step_started
+              type: object
+              additionalProperties: false
+              properties:
+                name:
+                  type: string
+                  pattern: \S
+                  nullable: true
+                  description: The name the event is sent under.
+                enabled:
+                  type: boolean
+                  description: Whether the event is sent.
+            workflows_non_checkout_completion_event:
+              description: A funnel completed without a checkout.
+              x-event-kind: workflows_non_checkout_completion
+              type: object
+              additionalProperties: false
+              properties:
+                name:
+                  type: string
+                  pattern: \S
+                  nullable: true
+                  description: The name the event is sent under.
+                enabled:
+                  type: boolean
+                  description: Whether the event is sent.
+            purchase_redeemed_event:
+              description: A web purchase redeemed in the app.
+              x-event-kind: purchase_redeemed
+              type: object
+              additionalProperties: false
+              properties:
+                name:
+                  type: string
+                  pattern: \S
+                  nullable: true
+                  description: The name the event is sent under.
+                enabled:
+                  type: boolean
+                  description: Whether the event is sent.
+        mixpanel_sandbox_token:
+          type: string
+          pattern: \S
+          nullable: true
+          description: >-
+            The project token sandbox events are sent with. Without it they are
+            not sent.
+          x-environment: sandbox
+          format: password
+        mixpanel_secret_key:
+          type: string
+          pattern: \S
+          nullable: true
+          description: >-
+            The API secret of the Mixpanel project. With it, events that
+            happened more than 5 days ago are sent too.
+          format: password
+        mixpanel_token:
+          type: string
+          pattern: \S
+          nullable: true
+          description: >-
+            The project token production events are sent with. Without it they
+            are not sent. A token for at least one environment is required.
+          x-environment: production
+          format: password
+        revenue_reporting_mode:
+          type: string
+          enum:
+            - gross
+            - net_of_commission
+            - net_of_commission_and_taxes
+            - null
+          nullable: true
+          description: >-
+            The revenue reported with each event: gross, net of the store
+            commission, or net of the commission and taxes. When not set: gross,
+            or net of the store commission if the integration has the older
+            report-proceeds option on.
+        should_send_paywall_events:
+          type: boolean
+          description: >-
+            Whether paywall events are sent. While off, none is sent, whatever
+            its own `enabled` says. `false` on create unless sent.
+        should_send_workflows_events:
+          type: boolean
+          description: >-
+            Whether funnel events are sent. While off, none is sent, whatever
+            its own `enabled` says. `false` on create unless sent.
+        total_spent_user_property:
+          type: string
+          pattern: \S
+          nullable: true
+          description: >-
+            The user property that accumulates a customer's revenue in USD. Not
+            sent when empty. `"total_spent_user_property"` on create unless
+            sent.
+        track_url:
+          type: string
+          enum:
+            - https://api.mixpanel.com/track/
+            - https://api-eu.mixpanel.com/track/
+            - https://api-in.mixpanel.com/track/
+            - null
+          nullable: true
+          description: >-
+            The track endpoint, for a project with EU or India data residency.
+            The US endpoint when not set.
     MonetaryAmount:
       type: object
       required:
@@ -22852,6 +24343,31 @@ components:
           example: true
           description: Whether SDKs may spend virtual currency with a user access token.
       additionalProperties: false
+    UpdateIntegrationRequest:
+      oneOf:
+        - $ref: '#/components/schemas/UpdateMixpanelIntegrationRequest'
+      discriminator:
+        propertyName: vendor
+        mapping:
+          mixpanel: '#/components/schemas/UpdateMixpanelIntegrationRequest'
+    UpdateMixpanelIntegrationRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - vendor
+      properties:
+        vendor:
+          description: >-
+            The vendor of the integration, which says how to read `settings`. It
+            has to be the one the integration was created with.
+          type: string
+          enum:
+            - mixpanel
+          example: mixpanel
+        status:
+          $ref: '#/components/schemas/IntegrationStatusInput'
+        settings:
+          $ref: '#/components/schemas/MixpanelIntegrationSettingsInput'
     UpdateOfferingRequest:
       type: object
       properties:
@@ -23074,7 +24590,6 @@ components:
           description: Description of the in-app currency (virtual currency)
           nullable: true
           type: string
-          minLength: 1
           maxLength: 1500
           example: Gold currency used in the game
         product_grants:
