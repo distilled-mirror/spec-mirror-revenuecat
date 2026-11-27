@@ -2,6 +2,8 @@ info:
   title: Developer API (BETA)
   version: 2.0.0
 tags:
+  - name: Account
+    description: Operations about the authenticated account.
   - name: Audience
     description: Operations about audiences.
   - name: App
@@ -761,6 +763,116 @@ tags:
 
       ![](/docs/images/api-v2/b3134c1-Family_shared_subscriptions__regranted.png)
 paths:
+  /account/billing:
+    get:
+      summary: Get account billing
+      operationId: get-account-billing
+      x-revenuecat-rate-limiting-domain: account
+      x-scopes:
+        - account:billing:read
+      x-release-status: public
+      x-revenuecat-principal-types:
+        - developer
+      tags:
+        - Account
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountBilling'
+          headers:
+            RevenueCat-Rate-Limit-Current-Usage:
+              $ref: '#/components/headers/RateLimitCurrentUsage'
+            RevenueCat-Rate-Limit-Current-Limit:
+              $ref: '#/components/headers/RateLimitCurrentLimit'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '423':
+          $ref: '#/components/responses/Locked'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        '503':
+          $ref: '#/components/responses/InternalError'
+      description: >-
+        This endpoint requires the following permission(s):
+        <code>account:billing:read</code>. This endpoint belongs to the
+        <strong>Account</strong> domain, which has a default rate limit of
+        <strong>60 requests per minute</strong>.
+  /account/billing/invoices:
+    get:
+      summary: List account billing invoices
+      operationId: list-account-billing-invoices
+      x-revenuecat-rate-limiting-domain: account
+      x-scopes:
+        - account:billing:read
+      x-release-status: public
+      x-revenuecat-principal-types:
+        - developer
+      tags:
+        - Account
+      parameters:
+        - name: starting_after
+          in: query
+          required: false
+          description: >-
+            Pagination cursor. Pass the id of the last item from the previous
+            page to fetch the next page; omit for the first page.
+          schema:
+            type: string
+            example: ent12354
+        - name: limit
+          in: query
+          required: false
+          description: >-
+            Maximum number of items to return per page. Values below 1 or above
+            100 are clamped to that range rather than rejected.
+          schema:
+            type: integer
+            example: 10
+            default: 20
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListAccountBillingInvoices'
+          headers:
+            RevenueCat-Rate-Limit-Current-Usage:
+              $ref: '#/components/headers/RateLimitCurrentUsage'
+            RevenueCat-Rate-Limit-Current-Limit:
+              $ref: '#/components/headers/RateLimitCurrentLimit'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '423':
+          $ref: '#/components/responses/Locked'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        '503':
+          $ref: '#/components/responses/InternalError'
+      description: >-
+        This endpoint requires the following permission(s):
+        <code>account:billing:read</code>. This endpoint belongs to the
+        <strong>Account</strong> domain, which has a default rate limit of
+        <strong>60 requests per minute</strong>.
   /projects:
     get:
       summary: Get a list of projects
@@ -2290,8 +2402,7 @@ paths:
       x-revenuecat-rate-limiting-domain: charts_metrics
       x-scopes:
         - charts_metrics:benchmarks:read
-      x-release-status: beta
-      x-revenuecat-release-gatekeeping: false
+      x-release-status: public
       tags:
         - Charts & Metrics
       parameters:
@@ -13104,6 +13215,110 @@ components:
       scheme: bearer
       type: http
   schemas:
+    AccountBilling:
+      type: object
+      required:
+        - object
+        - current_plan
+        - current_period
+        - tracked_revenue
+        - has_payment_method
+      properties:
+        object:
+          description: >-
+            String representing the object's type. Objects of the same type
+            share the same value.
+          enum:
+            - account_billing
+          type: string
+          example: account_billing
+        current_plan:
+          description: Current RevenueCat account billing plan.
+          type: string
+          minLength: 1
+          maxLength: 255
+          example: pro
+        current_period:
+          $ref: '#/components/schemas/AccountBillingPeriod'
+        tracked_revenue:
+          $ref: '#/components/schemas/AccountBillingTrackedRevenue'
+        has_payment_method:
+          description: Whether the account has a payment method on file.
+          type: boolean
+          example: true
+      additionalProperties: false
+    AccountBillingInvoice:
+      type: object
+      required:
+        - object
+        - id
+        - issued_at
+        - amount_due_cents
+        - subtotal_cents
+        - status
+      properties:
+        object:
+          description: >-
+            String representing the object's type. Objects of the same type
+            share the same value.
+          enum:
+            - account_billing.invoice
+          type: string
+          example: account_billing.invoice
+        id:
+          description: Stripe invoice ID.
+          type: string
+          example: in_123
+        issued_at:
+          description: Invoice creation time in milliseconds since epoch.
+          type: integer
+          format: int64
+          example: 1528757300000
+        amount_due_cents:
+          description: Amount due in cents.
+          type: integer
+          example: 11900
+        subtotal_cents:
+          description: Invoice subtotal in cents.
+          type: integer
+          example: 11900
+        status:
+          description: Stripe invoice status.
+          type: string
+          example: paid
+      additionalProperties: false
+    AccountBillingPeriod:
+      type: object
+      required:
+        - starts_at
+        - ends_at
+      properties:
+        starts_at:
+          description: Billing period start time in milliseconds since epoch.
+          type: integer
+          format: int64
+          example: 1658399423658
+        ends_at:
+          description: Billing period end time in milliseconds since epoch.
+          type: integer
+          format: int64
+          example: 1661077823658
+      additionalProperties: true
+    AccountBillingTrackedRevenue:
+      type: object
+      required:
+        - current_period_tracked_revenue
+        - last_30d_tracked_revenue
+      properties:
+        current_period_tracked_revenue:
+          description: Current billing period tracked revenue in cents.
+          type: integer
+          example: 12345
+        last_30d_tracked_revenue:
+          description: Last 30 days tracked revenue in cents.
+          type: integer
+          example: 23456
+      additionalProperties: true
     AmazonApp:
       type: object
       required:
@@ -18704,6 +18919,41 @@ components:
         unit_amount:
           $ref: '#/components/schemas/MonetaryAmount'
       additionalProperties: false
+    ListAccountBillingInvoices:
+      type: object
+      required:
+        - items
+        - next_page
+        - object
+        - url
+      title: AccountBillingInvoicesList
+      properties:
+        object:
+          description: >-
+            String representing the object's type. Objects of the same type
+            share the same value. Always has the value `list`.
+          enum:
+            - list
+          type: string
+        items:
+          description: Details about each object.
+          items:
+            $ref: '#/components/schemas/AccountBillingInvoice'
+          type: array
+        next_page:
+          description: >-
+            URL to access the next page of the account billing invoices. If not
+            present / null, there is no next page.
+          type:
+            - string
+            - 'null'
+          example: /v2/account/billing/invoices?starting_after=in_123&limit=10
+        url:
+          description: The URL where this list can be accessed.
+          maxLength: 5000
+          type: string
+          example: /v2/account/billing/invoices
+      additionalProperties: false
     ListApps:
       type: object
       required:
@@ -20653,13 +20903,13 @@ components:
         should_send_paywall_events:
           type: boolean
           description: >-
-            Whether paywall events are sent. While off, none is sent, whatever
-            its own `enabled` says.
+            Whether paywall events are sent. While off, none of them is sent,
+            even one that is enabled.
         should_send_workflows_events:
           type: boolean
           description: >-
-            Whether funnel events are sent. While off, none is sent, whatever
-            its own `enabled` says.
+            Whether funnel events are sent. While off, none of them is sent,
+            even one that is enabled.
         total_spent_user_property:
           type:
             - string
@@ -21083,13 +21333,13 @@ components:
         should_send_paywall_events:
           type: boolean
           description: >-
-            Whether paywall events are sent. While off, none is sent, whatever
-            its own `enabled` says. `false` on create unless sent.
+            Whether paywall events are sent. While off, none of them is sent,
+            even one that is enabled. `false` on create unless sent.
         should_send_workflows_events:
           type: boolean
           description: >-
-            Whether funnel events are sent. While off, none is sent, whatever
-            its own `enabled` says. `false` on create unless sent.
+            Whether funnel events are sent. While off, none of them is sent,
+            even one that is enabled. `false` on create unless sent.
         total_spent_user_property:
           type:
             - string
@@ -25540,6 +25790,7 @@ x-tagGroups:
       - Subscription Data Model
   - name: Endpoint Reference
     tags:
+      - Account
       - Audience
       - App
       - Audit Log
