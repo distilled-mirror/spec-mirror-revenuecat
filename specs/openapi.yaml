@@ -15025,6 +15025,24 @@ components:
             LTV window such as `30 days`. Values are chart-specific labels.
           type: string
           example: absolute
+        timeframe:
+          description: >-
+            The window this series counts, on charts whose measures are limited
+            to one, e.g. `7 days` after installation or `Unbounded`. Values are
+            chart-specific labels.
+          type: string
+          example: 7 days
+        effect:
+          description: >-
+            Whether an increase in this series is good (`positive`), bad
+            (`negative`) or neither (`neutral`) for the project, e.g. new versus
+            churned subscriptions in a movement chart.
+          type: string
+          enum:
+            - positive
+            - negative
+            - neutral
+          example: positive
         chartable:
           description: Whether the series is meaningful to plot.
           type: boolean
@@ -17457,13 +17475,11 @@ components:
         lookup_key:
           description: A custom identifier of the entitlement
           type: string
-          minLength: 1
           maxLength: 200
           example: premium
         display_name:
           description: The display name of the entitlement
           type: string
-          minLength: 1
           maxLength: 1500
           example: Premium
         created_at:
@@ -21434,7 +21450,6 @@ components:
         display_name:
           description: The display name of the offering
           type: string
-          minLength: 1
           maxLength: 1500
           example: The standard set of packages
         is_current:
@@ -22492,7 +22507,6 @@ components:
         store_identifier:
           description: The store product identifier
           type: string
-          minLength: 1
           maxLength: 255
           example: rc_1w_199
         type:
@@ -22530,7 +22544,6 @@ components:
           type:
             - string
             - 'null'
-          minLength: 1
           maxLength: 1500
           example: Premium Monthly 2023
       additionalProperties: false
